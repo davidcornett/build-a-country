@@ -14,7 +14,6 @@ def root():
 # Listener
 
 if __name__ == "__main__":
-   # port = int(os.environ.get('PORT', 6205))
-                        
-   # app.run(port=port) 
-   app.run()
+    # bind to PORT if defined, otherwise use default
+    port = int(os.environ.get('PORT', 6205))
+    app.run(host='0.0.0.0',port=port) 
