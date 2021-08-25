@@ -14,6 +14,7 @@ def root():
 # Listener
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 6205))
+   # port = int(os.environ.get('PORT', 6205))
                         
-    app.run(port=port) 
+   # app.run(port=port) 
+   app.run()
