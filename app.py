@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def root():
-    return "Welcome to the OSU CS 340 - Flask Tutorial!"
+    return "map test!"
 
 # Listener
 
