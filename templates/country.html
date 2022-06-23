@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Your New Country</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+      <object id='map' data="{{ url_for('static', filename='test2.svg') }}" type="image/svg+xml"></object>
+      <!--
+      <div class='wrapper'>
+        <h3>Current County:</h3>
+        <p id='currentCounty'></p>
+        <h3> Number of Counties Selected:</h3>
+        <p id='countyCount'>0</p>
+      </div>
+    -->
+    <p>{{country.get_pop()}}</p>
+
+      <script src="{{ url_for('static', filename='build_map.js') }}"></script>
+
+  </body>
+</html>

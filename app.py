@@ -1,7 +1,12 @@
-from flask import Flask, render_template, request, flash
+from array import array
+from flask import Flask, render_template, request, flash, jsonify
 import os
 from county import County
 from country import Country
+
+# global var: TBD replace with DB calls
+player_country = None
+
 
 # Configuration
 app = Flask(__name__)
@@ -13,19 +18,45 @@ def root():
 
 @app.route('/map', methods=['GET', 'POST'])
 def map():
+    
     if request.method == 'POST':
 
         countyID_string = request.form['counties']
         countyID_list = process_countyID(countyID_string)
+        global player_country
         player_country = createCountry(countyID_list)
-
-        for i in player_country.get_counties():
-            print(i.get_name())
         
-        return "test"
+        print(player_country.get_pop())
+
+        # create_new_map([x.get_id() for x in player_country.get_counties()], "namey")
+ 
+        return render_template("country.html", country = player_country)
 
     else:
         return render_template("map.html")
+
+@app.route('/get_ids')
+def get_ids() -> array:
+    return jsonify([x.get_id() for x in player_country.get_counties()])
+    #return jsonify({'A':12345, 'B':764})
+    #return jsonify([1, 2, 3, 4])
+
+
+
+def create_new_map(county_ids: list, name: str) -> None:
+    new_file = open("static/empty_map.svg")
+    content = new_file.read()
+    print(content[0:40])
+    """
+    for x in county_ids:
+        print("new map: %s", x)
+    """
+    old_file = open("static/test2.svg")
+    #new_file.write("ffff") 
+    new_file.close()
+    old_file.close()
+
+
 
 def process_countyID(id: str) -> list:
     output = []
@@ -41,10 +72,8 @@ def process_countyID(id: str) -> list:
     return output
 
 def createCountry(county_ids: list) -> object:
-    county_list = []
-    for id in county_ids:
-        county_list.append(County(id))
-
+    # returns Country, comprised of Counties
+    county_list = [County(id) for id in county_ids] # create list of County objects from list of county IDs
     return Country(county_list)
 
 # Listener

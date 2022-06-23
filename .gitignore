@@ -1,3 +1,5 @@
 /.vscode
 /venv
 .env
+.token
+.token.txt
