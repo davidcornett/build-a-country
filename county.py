@@ -35,3 +35,4 @@ class County:
         cur.execute(pop2020_query, [self._id])
         return cur.fetchone()[0]
     
+    

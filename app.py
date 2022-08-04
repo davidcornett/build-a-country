@@ -37,7 +37,7 @@ def map():
         countyID_list = process_countyID(countyID_string)
         global player_country
         player_country = createCountry(countyID_list)
-
+ 
         if not check_validity(player_country):
             return "Error: invalid country"
         
@@ -107,43 +107,30 @@ def adjacency():
 
 def check_validity(country: object) -> bool:
     county_ids = [county.get_id() for county in country.get_counties()]
-    print("length of chosen ids: " + str(len(county_ids)))
-    print("length of adj: " + str(len(county_adjacencies)))
+    #print("length of chosen ids: " + str(len(county_ids)))
+    #print("length of adj: " + str(len(county_adjacencies)))
 
-    checked_ids = [county_ids[0]]
-    i = 1
-    while i < len(county_ids):
-        
-        print("bin search on: " + str(county_ids[i]) + "with checked_ids: " + str(checked_ids))
-        if not adj_binary_search(int(county_ids[i]), checked_ids):
-            print("\ninvalid!")
-            return False
-        checked_ids.append(county_ids[i])
-        i += 1
+    starting_node = country.get_counties()[0].get_id()  # get a county ID from country
+    visited = [starting_node]
+    queue = [starting_node]
+    counter = 0
 
-    print("\nvalid!")
-    return True
-    """
-    i = 0
-    j = 0
-    while i < len(county_ids):
-        while j < len(county_ids):
-            if j != i:
-                if adj_binary_search(county_ids[i], county_ids[j]):
-                    return True
-            j += 1
-        j = 0
-        i += 1
+    while queue:
+        current_node = queue.pop(0)
+        counter += 1
 
-    for id in county_ids:
-        if adj_binary_search(int(id), county_ids):
-            continue
-        else:
-            return False
-    return True
-    """
+        # get adjacent nodes of current node
+        adjacent_nodes = adj_binary_search(int(current_node))
 
-def adj_binary_search(id: int, checked_ids: list) -> bool:
+        for node in adjacent_nodes:
+            if node not in visited and node in county_ids:
+                visited.append(node)
+                queue.append(node)
+
+    return True if counter == len(county_ids) else False
+
+
+def adj_binary_search(id: int) -> bool:
     
     # get lowest and highest county id from global array of arrays 
     low = 0
@@ -155,17 +142,8 @@ def adj_binary_search(id: int, checked_ids: list) -> bool:
         mid_item = int(county_adjacencies[mid][0])
         
         if id == mid_item:
-            
-            j = 0
-            for j in range(len(checked_ids)):
-                for i in range(len(county_adjacencies[mid])):
-                    print(county_adjacencies[mid][i], end=' ')
-                    if county_adjacencies[mid][i] == checked_ids[j]:
-                        print(str(county_adjacencies[mid][i]) + "==" + str(checked_ids[j]))
-                        return True
-            print("reached end - fail")
-            return False
-            
+            #print("returning adjacencies: " + str(county_adjacencies[mid][1:]))
+            return county_adjacencies[mid][1:]
 
         elif (low == high):
             break       
@@ -173,7 +151,6 @@ def adj_binary_search(id: int, checked_ids: list) -> bool:
             low = mid + 1
         else:
             high = mid - 1
-
 
         #print("low = " + str(low) + " high = " + str(high))
     return False
