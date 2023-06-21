@@ -1,9 +1,14 @@
 from array import array
+from ast import Str
 from flask import Flask, render_template, request, flash, jsonify
 import os
 from county import County
 from country import Country
 import csv
+
+from svg.path import parse_path
+from svg.path.path import Line
+from xml.dom import minidom
 
 
 county_adjacencies = [] # array of linked lists
@@ -11,12 +16,16 @@ county_adjacencies = [] # array of linked lists
 # global var: TBD replace with DB calls
 player_country = None
 
+# globals to control country sizes - TBD replace when different modes allowed
+max_area = 10000
+min_area = 0
 
 # Configuration
 app = Flask(__name__)
 
 def main():
     adjacency()
+    
     """
     for e in county_adjacencies:
         print(e)
@@ -26,7 +35,33 @@ def main():
 # Routes 
 @app.route('/')
 def root():
-    return '4'
+    return "not implemented"
+
+
+@app.route('/svg')
+def svg():
+    path_dict = {}
+    doc = minidom.parse('static/usa-all-counties.svg')
+    path_strings = [path.getAttribute('d') for path in doc.getElementsByTagName('path')]
+    paths = [path for path in doc.getElementsByTagName('path')]
+    
+    for p in paths:
+        for county in player_country.get_counties():
+            if p.getAttribute('id') == county.get_id():
+                print(p.getAttribute('id'))
+                path_dict[p.getAttribute('id')] = {"d":p.getAttribute('d')}
+
+    doc.unlink()
+
+    """
+    paths["id"] = "01069"
+    paths["d"] = "M 409.67498,255.323 L 413.28898,254.994 L 413.17198,255.336 L 413.09598,255.67 L 413.24898,256.585 L 413.36098,256.846 L 413.45598,256.9 L 413.55098,256.9 L 413.63298,256.923 L 414.15398,257.496 L 414.23598,257.643 L 414.35498,257.9 L 414.67798,258.834 L 409.35098,259.482 L 409.26498,258.46 L 409.08798,256.882 L 408.00198,257.067 L 406.63198,257.211 L 407.02098,256.233 L 407.08298,256.179 L 407.33998,256.094 L 407.52498,256.085 L 407.69998,256.094 L 408.07398,256.183 L 408.35898,256.26 L 408.85498,256.306 L 409.02198,256.291 L 409.71998,255.692 L 409.67498,255.323"
+    paths["inkscape:label"] = "Houston, AL"
+    """
+
+    return jsonify(path_dict)
+
+    return "44"
 
 @app.route('/map', methods=['GET', 'POST'])
 def map():
@@ -38,35 +73,43 @@ def map():
         global player_country
         player_country = createCountry(countyID_list)
  
+        # check that country is contigious and within allowed area range
         if not check_validity(player_country):
             return "Error: invalid country"
         
         print(player_country.get_pop())
+        player_country.set_races()
+        #player_country.get_races()
 
         # create_new_map([x.get_id() for x in player_country.get_counties()], "namey")
  
         return render_template("country.html", country = player_country)
 
     else:
-        return render_template("map.html")
+        return render_template("map.html", max_area = max_area)
 
 @app.route('/get_ids')
 def get_ids() -> array:
     return jsonify([x.get_id() for x in player_country.get_counties()])
-    #return jsonify({'A':12345, 'B':764})
-    #return jsonify([1, 2, 3, 4])
 
+@app.route('/get_area/<id>')
+def get_area(id) -> str:
+    c = County(str(id))
+    print(c.get_name())
+    print(c.get_area())
+    #return jsonify(999)
+    return jsonify(c.get_area())
 
 
 def create_new_map(county_ids: list, name: str) -> None:
-    new_file = open("static/empty_map.svg")
+    new_file = open("static/template.svg")
     content = new_file.read()
     print(content[0:40])
     """
     for x in county_ids:
         print("new map: %s", x)
     """
-    old_file = open("static/test2.svg")
+    old_file = open("static/usa-all-counties.svg.svg")
     #new_file.write("ffff") 
     new_file.close()
     old_file.close()
@@ -106,11 +149,18 @@ def adjacency():
 
 
 def check_validity(country: object) -> bool:
+    # CHECK 1: AREA
+    if country.get_area() not in range(min_area, max_area):
+        return False
+
+    # CHECK 2: ADJACENCY
     county_ids = [county.get_id() for county in country.get_counties()]
     #print("length of chosen ids: " + str(len(county_ids)))
     #print("length of adj: " + str(len(county_adjacencies)))
 
     starting_node = country.get_counties()[0].get_id()  # get a county ID from country
+    
+    # BFS traversal of graph - if not all counties selected are visited, country is invalid
     visited = [starting_node]
     queue = [starting_node]
     counter = 0
