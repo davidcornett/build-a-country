@@ -6,8 +6,8 @@ from county import County
 from country import Country
 import csv
 
-from svg.path import parse_path
-from svg.path.path import Line
+#from svg.path import parse_path
+#from svg.path.path import Line
 from xml.dom import minidom
 
 
