@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import sql
 
 # Configuration
-con = psycopg2.connect(dbname='map_game', user='postgres', host='localhost', password='applePython@7788')
+con = psycopg2.connect(dbname='map_game', user='davidcornett', host='localhost', password='applePython@7788')
 cur = con.cursor()
 
 class County:

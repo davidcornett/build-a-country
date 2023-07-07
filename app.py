@@ -1,6 +1,7 @@
 from array import array
 from ast import Str
 from flask import Flask, render_template, request, flash, jsonify
+from flask_cors import CORS
 import os
 from county import County
 from country import Country
@@ -22,6 +23,7 @@ min_area = 0
 
 # Configuration
 app = Flask(__name__)
+CORS(app)  # enable CORS for all routes
 
 def main():
     adjacency()
