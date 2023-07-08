@@ -50,7 +50,7 @@ def svg():
     for p in paths:
         for county in player_country.get_counties():
             if p.getAttribute('id') == county.get_id():
-                print(p.getAttribute('id'))
+                #print(p.getAttribute('id'))
                 path_dict[p.getAttribute('id')] = {"d":p.getAttribute('d')}
 
     doc.unlink()
@@ -79,7 +79,7 @@ def map():
         if not check_validity(player_country):
             return "Error: invalid country"
         
-        print(player_country.get_pop())
+        #(player_country.get_pop())
         player_country.set_races()
         #player_country.get_races()
 
@@ -97,9 +97,6 @@ def get_ids() -> array:
 @app.route('/get_area/<id>')
 def get_area(id) -> str:
     c = County(str(id))
-    print(c.get_name())
-    print(c.get_area())
-    #return jsonify(999)
     return jsonify(c.get_area())
 
 
@@ -121,14 +118,20 @@ def create_new_map(county_ids: list, name: str) -> None:
 def process_countyID(id: str) -> list:
     output = []
     elem = ''
+
+    # remove leading-0s due to county id coding in SVG
+    def remove_leading_zero(id: str):
+        return id[1:] if id.startswith('0') else id
+    
     for char in id:
         # character groups terminating with comma should be appended to list
         if char == ',':
-            output.append(elem)
+            output.append(remove_leading_zero(elem))
             elem = ''
         else:
             elem += char
-    output.append(elem)  # add last character group, not terminating with comma
+    
+    output.append(remove_leading_zero(elem))  # add last character group, not terminating with comma
     return output
 
 def createCountry(county_ids: list) -> object:
@@ -157,8 +160,6 @@ def check_validity(country: object) -> bool:
 
     # CHECK 2: ADJACENCY
     county_ids = [county.get_id() for county in country.get_counties()]
-    #print("length of chosen ids: " + str(len(county_ids)))
-    #print("length of adj: " + str(len(county_adjacencies)))
 
     starting_node = country.get_counties()[0].get_id()  # get a county ID from country
     
