@@ -26,9 +26,10 @@ async function setCounties() {
     //var updatedStyle = "transform-origin: 25% 25%;fill:green;stroke:#ffffff;stroke-opacity:1;fill-opacity:1;stroke-width:0.25;stroke-miterlimit:4;stroke-dasharray:none";
 
     for (var key of Object.keys(selectedCounties)) {
+        console.log(key);
         let map = document.getElementById('map').contentDocument;
         let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        console.log(selectedCounties[key]['d']);
+        //console.log(selectedCounties[key]['d']);
         path.setAttribute("id", key);
         path.setAttribute("d", selectedCounties[key]['d']);
 

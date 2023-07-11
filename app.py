@@ -42,6 +42,7 @@ def root():
 
 @app.route('/svg')
 def svg():
+    print("SVG")
     path_dict = {}
     doc = minidom.parse('static/usa-all-counties.svg')
     path_strings = [path.getAttribute('d') for path in doc.getElementsByTagName('path')]
@@ -119,19 +120,15 @@ def process_countyID(id: str) -> list:
     output = []
     elem = ''
 
-    # remove leading-0s due to county id coding in SVG
-    def remove_leading_zero(id: str):
-        return id[1:] if id.startswith('0') else id
-    
     for char in id:
         # character groups terminating with comma should be appended to list
         if char == ',':
-            output.append(remove_leading_zero(elem))
+            output.append(elem)
             elem = ''
         else:
             elem += char
     
-    output.append(remove_leading_zero(elem))  # add last character group, not terminating with comma
+    output.append(elem)  # add last character group, not terminating with comma
     return output
 
 def createCountry(county_ids: list) -> object:
@@ -159,9 +156,12 @@ def check_validity(country: object) -> bool:
         return False
 
     # CHECK 2: ADJACENCY
-    county_ids = [county.get_id() for county in country.get_counties()]
+    def remove_leading_zero(id):
+        return id[1:] if id.startswith('0') else id
 
-    starting_node = country.get_counties()[0].get_id()  # get a county ID from country
+    county_ids = [remove_leading_zero(county.get_id()) for county in country.get_counties()]
+
+    starting_node = county_ids[0]  # get a county ID from country
     
     # BFS traversal of graph - if not all counties selected are visited, country is invalid
     visited = [starting_node]
