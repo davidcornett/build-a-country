@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='example.css') }}">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="container row">
+        <button id="left-button">left</button>
+        <button id="right-button">right</button>
+        <button id="up-button">up</button>
+        <button id="down-button">down</button>
+        <button id="zoom-in-button">zoom-in</button>
+        <button id="zoom-out-button">zoom-out</button>
+      </div>
+      <div class="svg-container">
+        <object id='svg' data="{{ url_for('static', filename='usa-all-counties.svg') }}" type="image/svg+xml"></object>
+        <!--
+        <svg
+          id="svg"
+          width="500"
+          height="500"
+          viewBox="0 0 500 500"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="250" cy="250" r="100" />
+        </svg>
+    -->
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='example.js') }}"></script>  </body>
+</html>
