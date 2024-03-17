@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import sql
 
 # Configuration
-con = psycopg2.connect(dbname='map_game', user='davidcornett', host='localhost', password='applePython@7788')
+con = psycopg2.connect(dbname='mapgame', user='davidcornett', host='localhost')
 cur = con.cursor()
 
 class County:
@@ -30,7 +30,7 @@ class County:
     def set_pop(self) -> int:
         pop_query = """
                 SELECT total_pop FROM countyid_year
-                WHERE year=2021 AND fips=%s;
+                WHERE year=2021 AND countyID=%s;
                 """
         
         cur.execute(pop_query, [self._id])

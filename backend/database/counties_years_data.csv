@@ -1,4 +1,4 @@
-﻿fips,year,unemployment_rate,per_capita_income,bachelors_rate,median_age,poverty_rate,black,native,asian,pac_isl,two_plus_races,hispanic,white_not_hispanic,total_pop
+﻿countyID,year,unemployment_rate,per_capita_income,bachelors_rate,median_age,poverty_rate,black,native,asian,pac_isl,two_plus_races,hispanic,white_not_hispanic,total_pop
 1001,2019,3.5,29819,26.6,38.2,,,,,,,,,
 1003,2019,4,32626,31.9,43,,,,,,,,,
 1005,2019,9.4,18473,11.6,40.4,,,,,,,,,

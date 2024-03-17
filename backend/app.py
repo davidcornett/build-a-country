@@ -98,6 +98,7 @@ def get_ids() -> array:
 @app.route('/get_area/<id>')
 def get_area(id) -> str:
     c = County(str(id))
+    #print(c.get_area())
     return jsonify(c.get_area())
 
 
